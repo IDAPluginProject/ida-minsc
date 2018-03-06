@@ -243,6 +243,7 @@ class typemap:
         typeid = idaapi.BADADDR if typeid < 0 else typeid
         return flag|(idaapi.FF_SIGN if sz < 0 else 0), typeid, abs(sz)*count
 
+@document.hidden
 class prioritybase(object):
     result = type('result', (object,), {})
     CONTINUE = type('continue', (result,), {})()
@@ -502,6 +503,7 @@ class prioritybase(object):
         # That's it!
         return closure
 
+@document.hidden
 class priorityhook(prioritybase):
     """
     Helper class for allowing one to apply a number of hooks to the
@@ -688,6 +690,7 @@ class priorityhook(prioritybase):
         res, items = "Hooks for {:s}:".format(hName), super(priorityhook, self).__repr__().split('\n')
         return '\n'.join([res] + items[1:])
 
+@document.hidden
 class prioritynotification(prioritybase):
     """
     Helper class for allowing one to apply an arbitrary number of hooks to the
@@ -1123,6 +1126,7 @@ class node(object):
         OP_REPR, INVERT_BIT = 8, 0x100000
         return internal.netnode.alt.get(ea, OP_REPR) & (INVERT_BIT << opnum) != 0
 
+@document.hidden
 def tuplename(*names):
     '''Given a tuple as a name, return a single name joined by "_" characters.'''
     iterable = ("{:x}".format(abs(item)) if isinstance(item, six.integer_types) else item for item in names)
@@ -1378,6 +1382,7 @@ else:
 #    18 : 'Code_Far_Jump', 19 : 'Code_Near_Jump',
 #    20 : 'Code_User', 21 : 'Ordinary_Flow'
 #}
+@document.classdef
 class reftype_t(object):
     """
     An object representing a reference type that allows one to easily extract
@@ -1478,6 +1483,7 @@ class reftype_t(object):
         resP = str().join(sorted(res))
         raise internal.exceptions.InvalidTypeOrValueError(u"{:s}.of_action({!r}) : Unable to to coerce the requested state ({!r}) into a cross-reference type ({!s}).".format('.'.join([__name__, cls.__name__]), resP, resP, cls.__name__))
 
+@document.classdef
 class ref_t(namedtypedtuple):
     """
     This tuple is used to represent references that include an operand number
@@ -1492,6 +1498,7 @@ class ref_t(namedtypedtuple):
         res = ("{!s}={:s}".format(internal.utils.string.escape(name, ''), ("{:#x}" if name in {'address'} else "{!s}").format(value)) for name, value in zip(self._fields, self))
         return "{:s}({:s})".format(cls.__name__, ', '.join(res))
 
+@document.classdef
 class opref_t(ref_t):
     """
     This tuple is used to represent references that include an operand number
@@ -1503,6 +1510,7 @@ class opref_t(ref_t):
 # XXX: is .startea always guaranteed to point to an instruction that modifies
 #      the switch's register? if so, then we can use this to calculate the
 #      .range/.cases more accurately instead of them being based on .elbase.
+@document.classdef
 class switch_t(object):
     """
     This object is a wrapper around the ``idaapi.switch_info_ex_t`` class and
@@ -1635,6 +1643,7 @@ class switch_t(object):
     def __repr__(self):
         return u"{!s}".format(self)
 
+@document.hidden
 def xiterate(ea, start, next):
     '''Utility function for iterating through idaapi's xrefs from `start` to `end`.'''
     getflags = idaapi.getFlags if idaapi.__version__ < 7.0 else idaapi.get_flags
@@ -1645,6 +1654,7 @@ def xiterate(ea, start, next):
         addr = next(ea, addr)
     return
 
+@document.hidden
 def addressOfRuntimeOrStatic(func):
     """Used to determine if `func` is a statically linked address or a runtime-linked address.
 
@@ -1769,6 +1779,7 @@ class collect_t(object):
         t = self.__cons__
         return "{!s} {!s} -> {!r}".format(self.__class__, getattr(t, '__name__', t), self.__state__)
 
+@document.classdef
 class architecture_t(object):
     """
     Base class to represent how IDA maps the registers and types
@@ -1904,6 +1915,7 @@ class architecture_t(object):
         cls = self.__class__
         raise internal.exceptions.RegisterNotFoundError(u"{:s}.demote({:s}{:s}) : Unable to determine the register to demote to.".format('.'.join([__name__, cls.__name__]), register, '' if size is None else ", size={:d}".format(size)))
 
+@document.classdef
 class bounds_t(namedtypedtuple):
     """
     This tuple is used to represent references that describe a bounds
